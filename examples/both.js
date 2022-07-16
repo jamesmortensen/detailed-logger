@@ -1,0 +1,3 @@
+require('./performance');
+
+require('./switchingLogLevels');
