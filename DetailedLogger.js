@@ -51,22 +51,11 @@ const logDecorator = new (function LogDecorator() {
             var stack = new Error().stack.toString();
             runExperimentalAsyncIfEnabled(() => {
                 var args = arguments;
-                //var traceInfoArr = stack.split('\n')[STACK_INDEX].match('\\((.*):(.*):');
-                //var traceInfoArr = stack.split('\n')[STACK_INDEX].match('.*\/(.*):(.*):');
-                //var traceInfoArr = stack.split('\n')[STACK_INDEX].match('.+?(\/.*):(.*):');
-                //stack.split('\n')[2].match('([^/]*):.*?$')[1].split(':')
-                //var traceInfoArr = stack.split('\n')[STACK_INDEX].match('([^/]*):(.*?):.*?$');
+               
                 var traceInfoArr = stack.split('\n')[STACK_INDEX].match('([^/]+):(.+?):');
                 var lineNumber = traceInfoArr[2];
-                // if (isNotYetRetrieved(logName))
-                //     logName = stack.split('\n')[1].match('\\.(.*)\\s')[1];
-                //if (isNotYetRetrieved(filename))
-                    //filename = traceInfoArr[1].toString().replace(cwd + '/', '');
-                    filename = traceInfoArr[1];
-                //logName='log';filename='none.js';lineNumber=1;
-                //args[0] = wrapWithColor(logName, '(' + filename + '):' + lineNumber + ': ' + logName + ': ' + args[0]);
-                // args[0] = '(' + filename + '):' + lineNumber + ': ' + wrapWithColor(logName, logName) + ': ' + args[0];
-                // legacyFn.apply(this, args);
+                filename = traceInfoArr[1];
+                
                 if (typeof (args[0]) === 'object') {
                     legacyFn.apply(this, [wrapWithColor(logName, '' + filename + ':' + lineNumber + ': <' + logName + '> OBJECT BEGIN >>>')]);
                     console[logName](args[0]);
@@ -79,18 +68,12 @@ const logDecorator = new (function LogDecorator() {
         };
     };
 
-    function isNotYetRetrieved(value) {
-        return value === undefined;
-    }
-
     // NOTE: It might actually be faster _without_ DETAILED_LOGGER_ASYNC!
     function getExperimentalAsyncIfEnabledFn() {
         if(process.env.DETAILED_LOGGER_ASYNC === 'true')
             return function(fn) { setTimeout(fn, 0); }
-            //setTimeout(fn, 0);
         else
             return function(fn) { fn(); }
-            //fn();
     }
 
     function getWrapWithColorFn(logName, logMsg) {
