@@ -31,9 +31,9 @@ const logDecorator = new (function LogDecorator() {
             : currentLogLevel;
         for (var i = 0; i < this.levels.length; i++) {
             var level = this.levels[i];
-            if(i <= currentLogLevel && level !== 'trace')
-                logMethods[level] = logDecorator.decorateLogs(console[level])
-            else if(level === 'trace')
+            if (i <= currentLogLevel && level !== 'trace')
+                logMethods[level] = decorateLogs(console[level])
+            else if (level === 'trace')
                 logMethods[level] = console[level];
             else
                 logMethods[level] = function () { };
@@ -42,59 +42,98 @@ const logDecorator = new (function LogDecorator() {
 
     function decorateLogs(legacyFn) {
         const STACK_INDEX = 2;
-        var logName;
+        const logName = legacyFn.name;
         var filename;
-        var cwd = process.cwd();
+        const cwd = process.cwd();
+        const runExperimentalAsyncIfEnabled = getExperimentalAsyncIfEnabledFn();
+        const wrapWithColor = getWrapWithColorFn(logName);
         return function () {
             var stack = new Error().stack.toString();
-            setTimeout(() => {    
+            runExperimentalAsyncIfEnabled(() => {
                 var args = arguments;
-                var traceInfoArr = stack.split('\n')[STACK_INDEX].match('\\((.*):(.*):');
+                //var traceInfoArr = stack.split('\n')[STACK_INDEX].match('\\((.*):(.*):');
+                //var traceInfoArr = stack.split('\n')[STACK_INDEX].match('.*\/(.*):(.*):');
+                //var traceInfoArr = stack.split('\n')[STACK_INDEX].match('.+?(\/.*):(.*):');
+                //stack.split('\n')[2].match('([^/]*):.*?$')[1].split(':')
+                //var traceInfoArr = stack.split('\n')[STACK_INDEX].match('([^/]*):(.*?):.*?$');
+                var traceInfoArr = stack.split('\n')[STACK_INDEX].match('([^/]+):(.+?):');
                 var lineNumber = traceInfoArr[2];
-                if (logName === undefined) {
-                    var retrievedLogName = stack.split('\n')[1].match('\\.(.*)\\s')[1];
-                    logName = addColorToLogLevel(retrievedLogName);
+                // if (isNotYetRetrieved(logName))
+                //     logName = stack.split('\n')[1].match('\\.(.*)\\s')[1];
+                //if (isNotYetRetrieved(filename))
+                    //filename = traceInfoArr[1].toString().replace(cwd + '/', '');
+                    filename = traceInfoArr[1];
+                //logName='log';filename='none.js';lineNumber=1;
+                //args[0] = wrapWithColor(logName, '(' + filename + '):' + lineNumber + ': ' + logName + ': ' + args[0]);
+                // args[0] = '(' + filename + '):' + lineNumber + ': ' + wrapWithColor(logName, logName) + ': ' + args[0];
+                // legacyFn.apply(this, args);
+                if (typeof (args[0]) === 'object') {
+                    legacyFn.apply(this, [wrapWithColor(logName, '' + filename + ':' + lineNumber + ': <' + logName + '> OBJECT BEGIN >>>')]);
+                    console[logName](args[0]);
+                    legacyFn.apply(this, [wrapWithColor(logName, '' + filename + ':' + lineNumber + ': <' + logName + '> <<< OBJECT END')]);
+                } else {
+                    args[0] = wrapWithColor(logName, '' + filename + ':' + lineNumber + ': <' + logName + '>: ' + args[0]);
+                    legacyFn.apply(this, args);
                 }
-                if (filename === undefined) {
-                    filename = traceInfoArr[1].toString().replace(cwd + '/', '');
-                }
-                args[0] = '(' + filename + '):' + lineNumber + ': ' + logName + ': ' + args[0];
-                legacyFn.apply(this, args);
-            }, 0);
+            });
         };
     };
 
-    function addColorToLogLevel(logName) {
-        var fgRed = "\x1b[31m";
-        var fgGreen = "\x1b[32m";
-        var fgYellow = "\x1b[33m";
-        var fgBlue = "\x1b[34m";
-        var fgMagenta = "\x1b[35m";
-        var fgBlack = "\x1b[0m";
+    function isNotYetRetrieved(value) {
+        return value === undefined;
+    }
+
+    // NOTE: It might actually be faster _without_ DETAILED_LOGGER_ASYNC!
+    function getExperimentalAsyncIfEnabledFn() {
+        if(process.env.DETAILED_LOGGER_ASYNC === 'true')
+            return function(fn) { setTimeout(fn, 0); }
+            //setTimeout(fn, 0);
+        else
+            return function(fn) { fn(); }
+            //fn();
+    }
+
+    function getWrapWithColorFn(logName, logMsg) {
+        let colorWrapTempl = getColorWrap(logName);
+        return function(logName, logMsg) {
+            const logOutput = colorWrapTempl.replace('<EOF>', logMsg);
+            return logOutput;
+        }
+    }
+
+    function getColorWrap(logName) {
+        const fgRed = "\x1b[31m";
+        const fgGreen = "\x1b[32m";
+        const fgYellow = "\x1b[33m";
+        const fgBlue = "\x1b[34m";
+        const fgMagenta = "\x1b[35m";
+        const fgBlack = "\x1b[0m";
+
+        let colorWrap;
 
         switch (logName) {
             case 'debug':
-                logName = fgBlue + logName + fgBlack;
+                colorWrap = fgBlue + '<EOF>' + fgBlack;
                 break;
             case 'log':
-                logName = fgMagenta + logName + fgBlack;
+                colorWrap = fgMagenta + '<EOF>' + fgBlack;
                 break;
             case 'info':
-                logName = fgGreen + logName + fgBlack;
+                colorWrap = fgGreen + '<EOF>' + fgBlack;
                 break;
             case 'warn':
-                logName = fgYellow + logName + fgBlack;
+                colorWrap = fgYellow + '<EOF>' + fgBlack;
                 break;
             case 'error':
-                logName = fgRed + logName + fgBlack;
+                colorWrap = fgRed + '<EOF>' + fgBlack;
                 break;
         }
-        return logName;
+        return colorWrap;
     }
 
     return {
-        decorateLogs: decorateLogs,
-        redefineLogMethods: redefineLogMethods
+        decorateLogs,
+        redefineLogMethods
     };
 })();
 

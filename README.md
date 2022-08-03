@@ -1,7 +1,9 @@
+# detailed-logger
+
 DetailedLogger logs the console methods to the terminal and color codes them. Most importantly, the filename and line number is included for faster debugging.
 
 ```
-var DetailedLogger = require('./DetailedLogger.js');
+var DetailedLogger = require('detailed-logger');
 var logger = new DetailedLogger();
 
 logger.trace('trace');
@@ -33,3 +35,7 @@ logger.setLevel('info');
 Note that 'info' is the default.
 
 Run the examples in the examples folder for more in-depth understanding.
+
+## License
+
+Copyright (c) James Mortensen, 2021-2022 MIT License
