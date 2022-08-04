@@ -10,10 +10,8 @@
   "license": "MIT",
   "devDependencies": {
     "executely": "^0.0.3",
-    "loglevel": "^1.7.1"
-  },
-  "dependencies": {
     "chai": "^4.3.6",
+    "loglevel": "^1.7.1",
     "mocha": "^10.0.0"
   }
 }
