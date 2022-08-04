@@ -13,7 +13,7 @@ class DetailedLogger {
     TRACE = 5;
 
     constructor() {
-        var currentLogLevel = this.INFO;
+        let currentLogLevel = this.INFO;
         this.setLevel(currentLogLevel);
     }
 
@@ -30,7 +30,7 @@ const logDecorator = new (function LogDecorator() {
             ? this.levels.indexOf(currentLogLevel)
             : currentLogLevel;
         for (var i = 0; i < this.levels.length; i++) {
-            var level = this.levels[i];
+            const level = this.levels[i];
             if (i <= currentLogLevel && level !== 'trace')
                 logMethods[level] = decorateLogs(console[level])
             else if (level === 'trace')
@@ -43,17 +43,17 @@ const logDecorator = new (function LogDecorator() {
     function decorateLogs(legacyFn) {
         const STACK_INDEX = 2;
         const logName = legacyFn.name;
-        var filename;
+        let filename;
         const cwd = process.cwd();
         const runExperimentalAsyncIfEnabled = getExperimentalAsyncIfEnabledFn();
         const wrapWithColor = getWrapWithColorFn(logName);
         return function () {
-            var stack = new Error().stack.toString();
+            const stack = new Error().stack.toString();
             runExperimentalAsyncIfEnabled(() => {
-                var args = arguments;
+                const args = arguments;
                
-                var traceInfoArr = stack.split('\n')[STACK_INDEX].match('([^/]+):(.+?):');
-                var lineNumber = traceInfoArr[2];
+                const traceInfoArr = stack.split('\n')[STACK_INDEX].match('.+[/^:]([^/]+):(.+?):');
+                const lineNumber = traceInfoArr[2];
                 filename = traceInfoArr[1];
                 
                 if (typeof (args[0]) === 'object') {
