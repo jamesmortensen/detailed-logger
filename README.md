@@ -2,9 +2,22 @@
 
 DetailedLogger logs the console methods to the terminal and color codes them. Most importantly, the filename and line number is included for faster debugging.
 
+## Import or Require
+
+ESM:
 ```
-var DetailedLogger = require('detailed-logger');
-var logger = new DetailedLogger();
+import DetailedLogger from 'detailed-logger';
+```
+
+CommonJS:
+```
+const DetailedLogger = require('detailed-logger');
+```
+
+## Initialization and Usage
+
+```
+const logger = new DetailedLogger();
 
 logger.trace('trace');
 logger.debug('debug');

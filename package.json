@@ -1,13 +1,27 @@
 {
   "name": "detailed-logger",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A fast, lightweight, colorized logging framework with helpful log details like filename and line numbers",
   "main": "index.js",
   "scripts": {
     "test": "mocha test/*.spec.js"
   },
+  "keywords": [
+    "log",
+    "logger",
+    "logging framework",
+    "colors",
+    "line numbers",
+    "esm",
+    "commonjs"
+  ],
   "author": "James Mortensen",
   "license": "MIT",
+  "homepage": "https://github.com/jamesmortensen/detailed-logger/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamesmortensen/detailed-logger.git"
+  },
   "devDependencies": {
     "executely": "^0.0.3",
     "chai": "^4.3.6",
