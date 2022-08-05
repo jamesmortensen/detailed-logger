@@ -56,12 +56,11 @@ const logDecorator = new (function LogDecorator() {
                 const lineNumber = traceInfoArr[2];
                 filename = traceInfoArr[1];
                 
+                const logDetails = '' + filename + ':' + lineNumber + ': <' + logName + '>:';
                 if (typeof (args[0]) === 'object') {
-                    legacyFn.apply(this, [wrapWithColor(logName, '' + filename + ':' + lineNumber + ': <' + logName + '> OBJECT BEGIN >>>')]);
-                    console[logName](args[0]);
-                    legacyFn.apply(this, [wrapWithColor(logName, '' + filename + ':' + lineNumber + ': <' + logName + '> <<< OBJECT END')]);
+                    legacyFn.apply(this, [wrapWithColor(logName, logDetails), args[0]]);
                 } else {
-                    args[0] = wrapWithColor(logName, '' + filename + ':' + lineNumber + ': <' + logName + '>: ' + args[0]);
+                    args[0] = wrapWithColor(logName, logDetails + ' ' + args[0]);
                     legacyFn.apply(this, args);
                 }
             });

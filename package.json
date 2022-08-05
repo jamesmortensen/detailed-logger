@@ -1,6 +1,6 @@
 {
   "name": "detailed-logger",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A fast, lightweight, colorized logging framework with helpful log details like filename and line numbers",
   "main": "index.js",
   "scripts": {
