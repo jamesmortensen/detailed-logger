@@ -14,6 +14,9 @@ logger.warn('warn');
 logger.error('error');
 ```
 
+<img width="384" alt="Screenshot 2022-08-05 at 7 55 09 AM" src="https://user-images.githubusercontent.com/1315816/182988479-509d1583-0ae2-498b-8033-f349fe7d352a.png">
+
+
 Trace is at the highest log level and error is at the lowest.  Use setLevel to adjust logging detail.
 
 ```
