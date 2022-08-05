@@ -1,10 +1,12 @@
 {
   "name": "detailed-logger",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A fast, lightweight, colorized logging framework with helpful log details like filename and line numbers",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/*.spec.js"
+    "test": "mocha test/*.spec.js",
+    "build": "mkdir -p build && npx uglifyjs --compress --mangle -- DetailedLogger.js > build/DetailedLogger.js && cp index.js package.json build/",
+    "test:build": "npm run build && cp -r test build/ && cd build && npm test && rm -rf test"
   },
   "keywords": [
     "log",
@@ -23,9 +25,10 @@
     "url": "https://github.com/jamesmortensen/detailed-logger.git"
   },
   "devDependencies": {
-    "executely": "^0.0.3",
     "chai": "^4.3.6",
+    "executely": "^0.0.3",
     "loglevel": "^1.7.1",
-    "mocha": "^10.0.0"
+    "mocha": "^10.0.0",
+    "uglify-js": "^3.16.3"
   }
 }
