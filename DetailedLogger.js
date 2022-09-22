@@ -42,7 +42,7 @@ const logDecorator = new (function LogDecorator() {
 
     function decorateLogs(legacyFn) {
         const STACK_INDEX = 2;
-        const logName = legacyFn.name;
+        const logName = legacyFn.name.replace(/.*\s/, '');  // handle node-fibers binding console logs
         let filename;
         const cwd = process.cwd();
         const runExperimentalAsyncIfEnabled = getExperimentalAsyncIfEnabledFn();
