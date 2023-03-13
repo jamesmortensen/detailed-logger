@@ -20,6 +20,13 @@ class DetailedLogger {
     setLevel(currentLogLevel) {
         logDecorator.redefineLogMethods(this, currentLogLevel);
     }
+
+    error(msg) {}
+    warn(msg) {}
+    info(msg) {}
+    log(msg) {}
+    debug(msg) {}
+    trace(msg) {}
 }
 
 const logDecorator = new (function LogDecorator() {
